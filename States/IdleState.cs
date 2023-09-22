@@ -33,7 +33,7 @@ namespace CE6127.Tanks.AI
                 var dist = Vector3.Distance(m_TankSM.transform.position, m_TankSM.Target.position);
                 if (dist > m_TankSM.TargetDistance)
                     m_StateMachine.ChangeState(m_TankSM.m_States.Patrolling);
-                if (dist <= 50f)
+                if (dist <= 70f)
                     m_StateMachine.ChangeState(m_TankSM.m_States.Chasing);
                 // ... Just for demonstration purposes; more to be implemented.
             }

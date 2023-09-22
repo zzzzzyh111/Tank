@@ -14,7 +14,10 @@ namespace CE6127.Tanks.AI
     internal class TankSM : StateMachine
     {
         private bool m_Fired = false;
+        private bool m_WasRoundPlaying = false;
         public float CooldownTime = 0.35f;
+        public float chargeTime = 0f;
+        public float maxChargeTime = 0.5f; 
         protected internal struct States
         {
             // States:
@@ -38,7 +41,7 @@ namespace CE6127.Tanks.AI
         public Vector2 PatrolWaitTime = new(1.5f, 3.5f);            // A minimum and maximum time delay for patrolling wait.
         [Tooltip("Minimum and maximum circumradius of the area to patrol at a given update time.")]
         public Vector2 PatrolMaxDist = new(15f, 30f);               // A minimum and maximum circumradius of the area to patrol.
-        [Range(0f, 2f)] public float PatrolNavMeshUpdate = 0.2f;    // A delay between each parolling path update.
+        [Range(0f, 2f)] public float PatrolNavMeshUpdate = 0.1f;    // A delay between each parolling path update.
         [Header("Targeting")]
         [Tooltip("Minimum and maximum range for the targeting range.")]
         public Vector2 StartToTargetDist = new(28f, 35f);           // A minimum and maximum range for the targeting range.
@@ -46,7 +49,7 @@ namespace CE6127.Tanks.AI
         [Tooltip("Minimum and maximum range for the stopping range.")]
         public Vector2 StopAtTargetDist = new(18f, 22f);            // A minimum and maximum range for the stopping range.
         [HideInInspector] public float StopDistance;                // The distance between the tank and the target.
-        [Range(0f, 2f)] public float TargetNavMeshUpdate = 0.2f;    // A delay between each targeting path update.
+        [Range(0f, 2f)] public float TargetNavMeshUpdate = 0.1f;    // A delay between each targeting path update.
         [Header("Blending")]
         [Range(0f, 1f)] public float OrientSlerpScalar = 0.2f;      // A scalar for the slerp.
         // [Header("Target")]
@@ -175,19 +178,24 @@ namespace CE6127.Tanks.AI
                 m_Started = false;
                 StopAllCoroutines();
             }
+            if (!m_WasRoundPlaying && GameManager.IsRoundPlaying)
+            {
+                
+                m_Fired = false;
+            }
+            m_WasRoundPlaying = GameManager.IsRoundPlaying;
         }
 
         /// <summary>
         /// Method <c>LaunchProjectile</c> instantiate and launch the shell.
         /// </summary>
-        public void LaunchProjectile(float launchForce = 20f)
+        public void LaunchProjectile(float LaunchForce)
         {
             if (m_Fired)
             {
                 return; // Exit the method if a bullet has already been fired.
             }
-            launchForce = Mathf.Min(Mathf.Max(LaunchForceMinMax.x, launchForce), LaunchForceMinMax.y);
-
+            // launchForce = Mathf.Min(Mathf.Max(LaunchForceMinMax.x, launchForce), LaunchForceMinMax.y);
             // Set the fired flag so only Fire is only called once.
             m_Fired = true;
 
@@ -195,7 +203,7 @@ namespace CE6127.Tanks.AI
             Rigidbody shellInstance = Instantiate(Shell, FireTransform.position, FireTransform.rotation) as Rigidbody;
 
             // Set the shell's velocity to the launch force in the fire position's forward direction.
-            shellInstance.velocity = launchForce * FireTransform.forward; ;
+            shellInstance.velocity = LaunchForce * FireTransform.forward; ;
 
             // Change the clip to the firing clip and play it.
             SFXAudioSource.clip = ShotFiringAudioClip;
