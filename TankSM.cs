@@ -60,7 +60,7 @@ namespace CE6127.Tanks.AI
         [Tooltip("Minimum and maximum cooldown time delay between each firing in seconds.")]
         public Vector2 FireInterval = new(0.7f, 2.5f);              // A minimum and maximum cooldown time delay between each firing.
         [Tooltip("Force given to the shell if the fire button is not held, and the force given to the shell if the fire button is held for the max charge time in seconds.")]
-        public Vector2 LaunchForceMinMax = new(6.5f, 30f);          // The force given to the shell if the fire button is not held, and the force given to the shell if the fire button is held for the max charge time.
+        public Vector2 LaunchForceMinMax = new(7.5f, 30f);          // The force given to the shell if the fire button is not held, and the force given to the shell if the fire button is held for the max charge time.
         [Header("References")]
         [Tooltip("Prefab")] public Rigidbody Shell;                 // Prefab of the shell.
         [Tooltip("Transform")] public Transform FireTransform;      // A child of the tank where the shells are spawned.
